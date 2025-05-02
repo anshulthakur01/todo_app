@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block main %}
+    <!-- Main Content -->
+    <div class="container mx-auto pt-24 px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Enhanced Sidebar -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Progress Card -->
+                <div class="bg-white backdrop-blur-sm bg-opacity-50 p-6 rounded-2xl shadow-sm border border-white/30">
+                    <h3 class="text-sm font-semibold text-gray-500 mb-4">PROGRESS</h3>
+                    <div class="space-y-4">
+                        <div class="relative pt-1">
+                            <div class="flex mb-2 items-center justify-between">
+                                <div>
+                                    <span class="text-xs font-semibold inline-block text-blue-600">
+                                        65% Complete
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded-full bg-blue-100">
+                                <div style="width:65%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-blue-400 to-purple-500"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smart Filters -->
+                <div class="bg-white backdrop-blur-sm bg-opacity-50 p-6 rounded-2xl shadow-sm border border-white/30">
+                    <h2 class="text-lg font-semibold mb-4">Smart Filters</h2>
+                    <div class="space-y-3">
+                        <button class="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+                            <span class="flex items-center space-x-2">
+                                <i class="fas fa-calendar-day text-purple-500"></i>
+                                <span>Today's Tasks</span>
+                            </span>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">{{ today_count }}</span>
+                        </button>
+                        <button class="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+                            <span class="flex items-center space-x-2">
+                                <i class="fas fa-star text-yellow-500"></i>
+                                <span>Total Items</span>
+                            </span>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">{{  total_count }}</span>
+                        </button>
+                        <button class="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
+                            <span class="flex items-center space-x-2">
+                                <i class="fas fa-star text-yellow-500"></i>
+                                <span>High priority</span>
+                            </span>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">{{  high_priority_count }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task List Area -->
+            <div class="lg:col-span-3">
+                <div class="bg-white backdrop-blur-sm bg-opacity-50 p-6 rounded-2xl shadow-sm border border-white/30">
+                    <!-- Task List Header -->
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
+                        <h2 class="text-2xl font-bold text-gray-800">My Tasks</h2>
+                        <a href="{{ url_for("add_task") }}">
+                            <button class="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:shadow-lg">
+                                <i class="fas fa-plus"></i>
+                                <span>
+                                    New Task
+                                </span>
+                            </button>
+                        </a>
+                        <!-- <div class="flex space-x-3">
+                            <div class="relative">
+                                <select class="appearance-none bg-white pl-4 pr-8 py-2 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 text-sm">
+                                    <option>Sort by Date</option>
+                                    <option>Sort by Priority</option>
+                                    <option>Sort by Status</option>
+                                </select>
+                                <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 text-sm"></i>
+                            </div>
+                        </div> -->
+                    </div>
+
+                    {% for task in tasks %}
+                        <!-- Enhanced Task Cards -->
+                        <div class="space-y-4 max-h-[600px] overflow-y-auto custom-scroll mb-5">
+                            <!-- Task Card -->
+                            <div class="group relative bg-white p-5 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border-l-4 border-blue-500 transform hover:-translate-y-1">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center space-x-3 mb-2">
+                                            <h3 class="text-lg font-semibold truncate">{{ task.task|title }}</h3>
+                                            <span class="px-2 py-1 text-xs rounded-full flex items-center 
+                                                {% if task.priority == 'High' %}
+                                                    bg-red-100 text-red-800
+                                                {% elif task.priority == 'Medium' %}
+                                                    bg-yellow-100 text-yellow-800
+                                                {% elif task.priority == 'Low' %}
+                                                    bg-green-100 text-green-800
+                                                {% else %}
+                                                    bg-gray-100 text-gray-800
+                                                {% endif %}">
+                                                <i class="fas 
+                                                    {% if task.priority == 'High' %}
+                                                        fa-fire
+                                                    {% elif task.priority == 'Medium' %}
+                                                        fa-exclamation-triangle
+                                                    {% elif task.priority == 'Low' %}
+                                                        fa-leaf
+                                                    {% else %}
+                                                        fa-question-circle
+                                                    {% endif %}
+                                                    mr-1"></i>
+                                                {{ task.priority|title }}
+                                            </span>
+                                            <span class="px-2 py-1 text-xs rounded-full flex items-center 
+                                                {% if task.status == 'pending' %}
+                                                    bg-orange-100 text-orange-800
+                                                {% elif task.status == 'in_prpogress' %}
+                                                    bg-blue-100 text-blue-800
+                                                {% elif task.status == 'completed' %}
+                                                    bg-green-100 text-green-800
+                                                {% else %}
+                                                    bg-gray-100 text-gray-800
+                                                {% endif %}">
+                                                <i class="fas 
+                                                    {% if task.status == 'pending' %}
+                                                        fa-clock
+                                                    {% elif task.status == 'in_prpogress' %}
+                                                        fa-spinner
+                                                    {% elif task.status == 'completed' %}
+                                                        fa-check-circle
+                                                    {% else %}
+                                                        fa-question-circle
+                                                    {% endif %}
+                                                    mr-1"></i>
+                                                {{ task.status|title }}
+                                            </span>
+                                        </div>
+                                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ task.description }}</p>
+                                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                            <span class="flex items-center">
+                                                <i class="fas fa-calendar-alt mr-2"></i> {{ task.created_at.strftime('%Y-%m-%d %H:%M %p') }}
+                                            </span>
+                                            <span class="flex items-center">
+                                                <i class="fas fa-clock mr-2"></i>{{ task.created_at | time_difference(task.due_date) }}
+
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-3">
+                                        <a href="{{ url_for('edit_task', task_id=task.id) }}" class="text-gray-400 hover:text-blue-500 transition-colors">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="text-gray-400 hover:text-red-500 transition-colors">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- Progress Indicator -->
+                                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-100 rounded-b-xl">
+                                    <div class="h-full bg-gradient-to-r from-blue-400 to-purple-500 w-3/4 rounded-b-xl"></div>
+                                </div>
+                            </div>
+
+                            <!-- Additional Task Cards... -->
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock main %}

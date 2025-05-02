@@ -1,0 +1,115 @@
+<div class="toast-container fixed top-4 right-4 space-y-3 z-50 w-80 max-w-[90vw]">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+        <div class="toast relative p-4 pr-10 rounded-xl shadow-lg text-white transition-all duration-300 transform 
+            {% if category == 'success' %}bg-green-500
+            {% elif category == 'error' %}bg-red-500
+            {% elif category == 'warning' %}bg-yellow-500
+            {% else %}bg-blue-500{% endif %} 
+            opacity-0 translate-x-8">
+            <div class="flex items-start gap-3">
+                <i class="fas 
+                    {% if category == 'success' %}fa-check-circle
+                    {% elif category == 'error' %}fa-times-circle
+                    {% elif category == 'warning' %}fa-exclamation-triangle
+                    {% else %}fa-info-circle{% endif %} 
+                    text-xl mt-0.5"></i>
+                <div class="flex-1">
+                    <p class="text-sm font-medium">{{ message }}</p>
+                </div>
+            </div>
+            <div class="absolute top-2 right-2">
+                <button class="close-btn px-2 py-1 hover:opacity-70 transition-opacity">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+            <div class="progress-bar absolute bottom-0 left-0 h-1 bg-black/10 w-full rounded-b-xl overflow-hidden">
+                <div class="progress-bar-inner h-full bg-white/30 w-full"></div>
+            </div>
+        </div>
+        {% endfor %}
+    {% endwith %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const toastContainer = document.querySelector('.toast-container');
+    
+    // Initialize flash messages
+    document.querySelectorAll('.toast').forEach(toast => {
+        initializeToast(toast, 9000);
+    });
+
+    // Global toast function
+    window.showToast = (message, category = 'info', duration = 9000) => {
+        const icons = {
+            success: 'fa-check-circle',
+            error: 'fa-times-circle',
+            warning: 'fa-exclamation-triangle',
+            info: 'fa-info-circle'
+        };
+        
+        const colors = {
+            success: 'bg-green-500',
+            error: 'bg-red-500',
+            warning: 'bg-yellow-500',
+            info: 'bg-blue-500'
+        };
+
+        const toast = document.createElement('div');
+        toast.className = `toast relative p-4 pr-10 rounded-xl shadow-lg text-white transition-all duration-300 transform opacity-0 translate-x-8 ${colors[category]}`;
+        toast.innerHTML = `
+            <div class="flex items-start gap-3">
+                <i class="fas ${icons[category]} text-xl mt-0.5"></i>
+                <div class="flex-1">
+                    <p class="text-sm font-medium">${message}</p>
+                </div>
+            </div>
+            <div class="absolute top-2 right-2">
+                <button class="close-btn px-2 py-1 hover:opacity-70 transition-opacity">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+            <div class="progress-bar absolute bottom-0 left-0 h-1 bg-black/10 w-full rounded-b-xl overflow-hidden">
+                <div class="progress-bar-inner h-full bg-white/30 w-full"></div>
+            </div>
+        `;
+
+        toastContainer.appendChild(toast);
+        initializeToast(toast, duration);
+    };
+
+    function initializeToast(toast, duration) {
+        // Animate entrance
+        setTimeout(() => {
+            toast.classList.remove('opacity-0', 'translate-x-8');
+            toast.classList.add('opacity-100', 'translate-x-0');
+        }, 10);
+
+        // Progress bar animation
+        const progressBar = toast.querySelector('.progress-bar-inner');
+        progressBar.style.transition = `width ${duration}ms linear`;
+        setTimeout(() => progressBar.style.width = '0%', 50);
+
+        // Auto-remove
+        const autoRemove = setTimeout(() => removeToast(toast), duration);
+
+        // Close button
+        toast.querySelector('.close-btn').addEventListener('click', () => {
+            clearTimeout(autoRemove);
+            removeToast(toast);
+        });
+    }
+
+    function removeToast(toast) {
+        toast.classList.add('opacity-0', 'translate-x-8');
+        setTimeout(() => toast.remove(), 300);
+    }
+});
+</script>
+
+<style>
+.progress-bar-inner {
+    transition-timing-function: linear;
+}
+</style>

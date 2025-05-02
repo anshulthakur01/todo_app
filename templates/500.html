@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block main %}
+<div class="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
+    <!-- Animated Background -->
+    <div class="absolute inset-0 bg-gradient-to-br from-red-100/50 to-blue-100/50 animate-hue-rotate"></div>
+
+    <div class="max-w-4xl w-full text-center space-y-8 relative">
+        <!-- Broken Shield Animation -->
+        <div class="relative mx-auto w-64 h-64">
+            <div class="absolute inset-0 bg-gradient-to-r from-red-400 to-pink-500 rounded-full blur-xl opacity-30"></div>
+            <div class="relative z-10">
+                <i class="fas fa-shield-alt text-9xl text-red-500 animate-crack"></i>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                        <span class="text-2xl font-bold text-red-600">500</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="space-y-4">
+            <h2 class="text-3xl font-semibold text-gray-800">Critical System Error</h2>
+            <p class="text-gray-600 max-w-xl mx-auto">
+                Our servers encountered a black hole while processing your request. 
+                Don't worry - our team of digital astronauts is already on the way to fix it!
+            </p>
+            <div class="flex justify-center space-x-4">
+                <a href="{{ url_for('index') }}" 
+                   class="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl 
+                          hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                    Return Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes crack {
+        0% { transform: rotate(0deg); }
+        25% { transform: rotate(10deg); }
+        50% { transform: rotate(-10deg); }
+        75% { transform: rotate(5deg); }
+        100% { transform: rotate(0deg); }
+    }
+    @keyframes hue-rotate {
+        0% { filter: hue-rotate(0deg); }
+        100% { filter: hue-rotate(360deg); }
+    }
+    .animate-crack { animation: crack 1s ease-in-out; }
+    .animate-hue-rotate { animation: hue-rotate 10s linear infinite; }
+    .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+</style>
+{% endblock %}
