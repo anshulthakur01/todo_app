@@ -2,22 +2,62 @@
 
 {% block styles %}
 <style>
-    .hide-container{
+    .hide-container {
         display: none;
+    }
+    
+    .no-data-container {
+        min-height: 300px;
+        @apply flex flex-col items-center justify-center py-12 px-4 text-center rounded-xl bg-blue-50 space-y-3;
+    }
+    
+    .no-data-container strong {
+        @apply text-blue-600 font-semibold;
+    }
+    
+    .no-data-icon {
+        @apply text-6xl text-blue-400 mb-4;
+    }
+
+    .custom-scroll::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.05);
+        border-radius: 10px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.1);
+        border-radius: 10px;
+    }
+
+    @media (max-width: 640px) {
+        .task-card-content {
+            @apply flex-col items-start;
+        }
+        
+        .task-actions {
+            @apply mt-4 pt-4 border-t border-gray-100 w-full justify-end;
+        }
+        
+        .priority-badge,
+        .status-badge {
+            @apply text-xs px-2 py-1;
+        }
     }
 </style>
 {% endblock styles %}
 
 {% block main %}
     <!-- Main Content -->
-    <div class="container mx-auto pt-24 px-4">
-        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <div class="container mx-auto pt-24 px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
             <!-- Enhanced Sidebar -->
-            <div class="lg:col-span-1 space-y-6">
+            <div class="lg:col-span-1 space-y-8">
                 <!-- Progress Card -->
-                <div class="bg-white backdrop-blur-sm bg-opacity-50 p-6 rounded-2xl shadow-sm border border-white/30">
-                    <h3 class="text-sm font-semibold text-gray-500 mb-4">PROGRESS</h3>
-                    <div class="space-y-4">
+                <div class="bg-white backdrop-blur-sm bg-opacity-50 p-6 rounded-2xl shadow-lg border border-white/30">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Progress</h3>
+                    <div class="space-y-5">
                         <div class="relative pt-1">
                             <div class="flex mb-2 items-center justify-between">
                                 <div>
@@ -26,37 +66,37 @@
                                     </span>
                                 </div>
                             </div>
-                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded-full bg-blue-100">
-                                <div style="width:65%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-blue-400 to-purple-500"></div>
+                            <div class="overflow-hidden h-2.5 mb-4 text-xs flex rounded-full bg-blue-100">
+                                <div style="width:65%" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-blue-400 to-purple-500 transition-all duration-500"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Smart Filters -->
-                <div class="bg-white backdrop-blur-sm bg-opacity-50 p-6 rounded-2xl shadow-sm border border-white/30">
-                    <h2 class="text-lg font-semibold mb-4">Smart Filters</h2>
-                    <div class="space-y-3">
+                <div class="bg-white backdrop-blur-sm bg-opacity-50 p-6 rounded-2xl shadow-lg border border-white/30">
+                    <h2 class="text-lg font-semibold mb-5 text-gray-800">Smart Filters</h2>
+                    <div class="space-y-4">
                         <button class="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
                             <span class="flex items-center space-x-2">
                                 <i class="fas fa-calendar-day text-purple-500"></i>
                                 <span>Today's Tasks</span>
                             </span>
-                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">{{ today_count }}</span>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full">{{ today_count }}</span>
                         </button>
                         <button class="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
                             <span class="flex items-center space-x-2">
                                 <i class="fas fa-list text-blue-500"></i>
                                 <span>Total Items</span>
                             </span>
-                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">{{  total_count }}</span>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full">{{  total_count }}</span>
                         </button>
                         <button class="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300">
                             <span class="flex items-center space-x-2">
                                 <i class="fas fa-star text-yellow-500"></i>
                                 <span>High priority</span>
                             </span>
-                            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">{{  high_priority_count }}</span>
+                            <span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full">{{  high_priority_count }}</span>
                         </button>
                     </div>
                 </div>
@@ -64,33 +104,36 @@
 
             <!-- Task List Area -->
             <div class="lg:col-span-3">
-                <div class="bg-white backdrop-blur-sm bg-opacity-50 p-6 rounded-2xl shadow-sm border border-white/30">
+                <div class="bg-white backdrop-blur-sm bg-opacity-50 p-6 rounded-2xl shadow-lg border border-white/30">
                     <!-- Task List Header -->
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 space-y-4 sm:space-y-0">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                         <h2 class="text-2xl font-bold text-gray-800">My Tasks</h2>
-                        <a href="{{ url_for("add_task") }}">
-                            <button class="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:shadow-lg">
+                        <a href="{{ url_for("add_task") }}" class="w-full sm:w-auto">
+                            <button class="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-shadow duration-300 flex items-center justify-center gap-2">
                                 <i class="fas fa-plus"></i>
-                                <span>
-                                    New Task
-                                </span>
+                                <span>New Task</span>
                             </button>
                         </a>
                     </div>
                     
-                    <div class="hide-container no-result-container space-y-4 max-h-[600px] overflow-y-auto custom-scroll mb-5">
-                    No result found for <strong></strong>
+                    
+                    <!-- No Data Container -->
+                    <div class="hide-container no-data-container">
+                        <i class="fas fa-tasks no-data-icon"></i>
+                        <p class="text-gray-600 mb-2">No tasks found for <strong></strong></p>
+                        <p class="text-sm text-gray-500">Try adjusting your search or create a new task</p>
                     </div>
-                    {% for task in tasks %}
-                        <!-- Enhanced Task Cards -->
-                        <div class="parent-todo-task space-y-4 max-h-[600px] overflow-y-auto custom-scroll mb-5">
+
+                    <!-- Tasks List -->
+                    <div class="space-y-6">
+                        {% for task in tasks %}
                             <!-- Task Card -->
-                            <div class="group relative bg-white p-5 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 border-l-4 border-blue-500 transform hover:-translate-y-1">
-                                <div class="flex justify-between items-start">
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex items-center space-x-3 mb-2">
-                                            <h3 class="todo-task-value text-lg font-semibold truncate">{{ task.task|title }}</h3>
-                                            <span class="px-2 py-1 text-xs rounded-full flex items-center 
+                            <div class="parent-todo-task bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border-l-4 border-blue-500">
+                                <div class="task-card-content flex flex-col sm:flex-row justify-between items-start gap-4">
+                                    <div class="flex-1 min-w-0 space-y-3">
+                                        <div class="flex flex-wrap items-center gap-3">
+                                            <h3 class="todo-task-value text-lg font-semibold text-gray-900">{{ task.task|title }}</h3>
+                                            <span class="priority-badge px-3 py-1 text-sm rounded-full flex items-center 
                                                 {% if task.priority == 'High' %}
                                                     bg-red-100 text-red-800
                                                 {% elif task.priority == 'Medium' %}
@@ -110,10 +153,10 @@
                                                     {% else %}
                                                         fa-question-circle
                                                     {% endif %}
-                                                    mr-1"></i>
+                                                    mr-1.5 text-sm"></i>
                                                 {{ task.priority|title }}
                                             </span>
-                                            <span class="px-2 py-1 text-xs rounded-full flex items-center 
+                                            <span class="status-badge px-3 py-1 text-sm rounded-full flex items-center 
                                                 {% if task.status == 'pending' %}
                                                     bg-orange-100 text-orange-800
                                                 {% elif task.status == 'in_prpogress' %}
@@ -133,50 +176,52 @@
                                                     {% else %}
                                                         fa-question-circle
                                                     {% endif %}
-                                                    mr-1"></i>
+                                                    mr-1.5 text-sm"></i>
                                                 {{ task.status|formatted_string }}
                                             </span>
                                         </div>
-                                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ task.description }}</p>
-                                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <p class="text-gray-600 text-sm leading-relaxed line-clamp-2">{{ task.description }}</p>
+                                        <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500">
                                             <span class="flex items-center">
-                                                <i class="fas fa-calendar-alt mr-2"></i> {{ task.created_at.strftime('%Y-%m-%d %H:%M %p') }}
+                                                <i class="fas fa-calendar-alt mr-2 text-gray-400"></i> 
+                                                {{ task.created_at.strftime('%Y-%m-%d %H:%M %p') }}
                                             </span>
                                             <span class="flex items-center">
-                                                <i class="fas fa-clock mr-2"></i>{{ task.created_at | time_difference(task.due_date) }}
-
+                                                <i class="fas fa-clock mr-2 text-gray-400"></i>
+                                                {{ task.created_at | time_difference(task.due_date) }}
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="flex items-center space-x-3">
-                                        <a href="{{ url_for('edit_task', task_id=task.id) }}" class="text-gray-400 hover:text-blue-500 transition-colors">
-                                            <i class="fas fa-edit"></i>
+                                    <div class="task-actions flex items-center gap-3 sm:pl-4">
+                                        <a href="{{ url_for('edit_task', task_id=task.id) }}" class="text-gray-400 hover:text-blue-500 transition-colors p-2">
+                                            <i class="fas fa-edit fa-sm"></i>
                                         </a>
                                         <button 
                                             onclick="openModal('{{ task.id }}', '{{ task.task }}')" 
-                                            class="text-gray-400 hover:text-red-500 transition-colors"
+                                            class="text-gray-400 hover:text-red-500 transition-colors p-2"
                                         >
-                                            <i class="fas fa-trash-alt"></i>
+                                            <i class="fas fa-trash-alt fa-sm"></i>
                                         </button>
                                     </div>
                                 </div>
                                 <!-- Progress Indicator -->
-                                <div class="absolute bottom-0 left-0 right-0 h-1 bg-gray-100 rounded-b-xl">
-                                    <div class="h-full bg-gradient-to-r from-blue-400 to-purple-500 w-3/4 rounded-b-xl"></div>
+                                <div class="mt-4 h-1 bg-gray-100 rounded-full">
+                                    <div class="h-full bg-gradient-to-r from-blue-400 to-purple-500 w-3/4 rounded-full transition-all duration-500"></div>
                                 </div>
                             </div>
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
+
                     <!-- Delete Confirmation Modal -->
                     <div id="deleteModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-                        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div class="flex items-center justify-center min-h-screen px-4 text-center">
                             <!-- Background overlay -->
                             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
                                 <div class="absolute inset-0 bg-black opacity-50"></div>
                             </div>
 
                             <!-- Modal content -->
-                            <div class="inline-block align-bottom bg-white backdrop-blur-sm bg-opacity-90 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                            <div class="inline-block bg-white backdrop-blur-sm bg-opacity-90 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all w-full max-w-lg my-8">
                                 <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                                     <div class="sm:flex sm:items-start">
                                         <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
@@ -215,30 +260,30 @@
     </div>
 
     <script>
-        let navSearch = document.getElementById("nav-search");
-        let allTasks = document.querySelectorAll(".todo-task-value");
-        let noResultContainer = document.querySelector(".no-result-container");
+        const navSearch = document.getElementById("nav-search");
+        const allTasks = document.querySelectorAll(".parent-todo-task");
+        const noDataContainer = document.querySelector(".no-data-container");
 
-        navSearch.addEventListener("input", function(event){
-            let exactInputValue = event.target.value;
-            let value = exactInputValue.toLowerCase();
-            allTasks.forEach(function(task) {
-                if (!task.textContent.toLowerCase().includes(value)) {
-                    task.closest(".parent-todo-task").classList.add("hide-container");
-                } else{
-                    task.closest(".parent-todo-task").classList.remove("hide-container");
-                }
-                let totalRowsCount = document.querySelectorAll(".parent-todo-task").length;
-                let totalHideRowsCount = document.querySelectorAll(".parent-todo-task.hide-container").length;
-                if (totalRowsCount===totalHideRowsCount) {
-                    noResultContainer.classList.remove("hide-container");
-                    noResultContainer.querySelector("strong").innerHTML = `'${exactInputValue}'`;
+        navSearch.addEventListener("input", function(event) {
+            const searchValue = event.target.value.toLowerCase();
+            let visibleCount = 0;
+
+            allTasks.forEach(task => {
+                const taskText = task.querySelector(".todo-task-value").textContent.toLowerCase();
+                if (taskText.includes(searchValue)) {
+                    task.classList.remove("hide-container");
+                    visibleCount++;
                 } else {
-                    if (!Array.from(noResultContainer.classList).includes('hide-container')) {
-                        noResultContainer.classList.add("hide-container");
-                    }
+                    task.classList.add("hide-container");
                 }
-            })
+            });
+
+            if (visibleCount === 0 && searchValue.length > 0) {
+                noDataContainer.classList.remove("hide-container");
+                noDataContainer.querySelector("strong").textContent = `'${event.target.value}'`;
+            } else {
+                noDataContainer.classList.add("hide-container");
+            }
         });
 
         function openModal(taskId, taskName) {
@@ -255,7 +300,6 @@
             document.getElementById('deleteModal').classList.add('hidden');
         }
 
-        // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = document.getElementById('deleteModal');
             if (event.target === modal) {
