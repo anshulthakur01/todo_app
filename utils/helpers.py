@@ -9,10 +9,10 @@ def sidebar_content():
     cursor = conn.cursor()
 
     query = """
-    SELECT 
+    SELECT
     COUNT(CASE WHEN created_at >= CURRENT_DATE THEN 1 END) AS today_count,
     COUNT(*) AS total_count,
-    COUNT(CASE WHEN status = 'hight_priority' THEN 1 END) AS high_priority_count
+    COUNT(CASE WHEN priority = 'high' THEN 1 END) AS high_priority_count
     FROM todo_tasks;
     """
 
@@ -85,6 +85,53 @@ def create_todo_task(data: dict):
         cursor.execute(query, tuple(data.values()))
         conn.commit()
         return cursor.fetchone()
+    finally:
+        cursor.close()
+        conn.close()
+
+
+def edit_todo_task(data: dict, id):
+    # Generate the SET clause dynamically based on the keys in the `data` dictionary
+    set_clause = ", ".join([f"{key} = %s" for key in data.keys()])
+
+    query = f"""
+    UPDATE todo_tasks 
+    SET {set_clause} 
+    WHERE id = %s;
+    """
+
+    conn = mysql.connector.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_NAME)
+    cursor = conn.cursor()
+
+    try:
+        # Execute the query with the data values and task ID
+        cursor.execute(query, tuple(data.values()) + (id,))
+        conn.commit()
+        return {"success": True, "affected_rows": cursor.rowcount}
+    except mysql.connector.Error as err:
+        print(f"Error updating task: {err}")
+        return {"success": False, "error": str(err)}
+    finally:
+        cursor.close()
+        conn.close()
+
+def delete_todo_task(field, value):
+    query = f"DELETE FROM {TODO_TABLE_NAME} WHERE {field} = %s;"
+    conn = mysql.connector.connect(
+        host=DB_HOST, 
+        user=DB_USER, 
+        password=DB_PASSWORD, 
+        database=DB_NAME
+    )
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute(query, (value,))
+        conn.commit()
+        return {"success": True, "affected_rows": cursor.rowcount}
+    except mysql.connector.Error as err:
+        print(f"Error deleting task: {err}")
+        return {"success": False, "error": str(err)}
     finally:
         cursor.close()
         conn.close()
